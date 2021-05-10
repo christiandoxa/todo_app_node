@@ -7,6 +7,13 @@ function commonErrorResponse(e, res) {
     });
 }
 
+function noteRequired(res) {
+    return res.status(400).json({
+        status: 400,
+        message: "id note required"
+    });
+}
+
 exports.createNote = async function (req, res) {
     try {
         const {note} = req.body;
@@ -48,10 +55,7 @@ exports.getNote = async function (req, res) {
         const {id_note} = req.params;
         const {ID_ACCOUNT} = req.user;
         if (!id_note) {
-            return res.status(400).json({
-                status: 400,
-                message: "id note required"
-            });
+            return noteRequired(res);
         }
         const note = await NOTE.findOne({where: {ID_NOTE: id_note, ID_ACCOUNT}});
         if (note) {
@@ -87,6 +91,36 @@ exports.updateNote = async function (req, res) {
             return res.status(200).json({
                 status: 200,
                 note: updatedNote
+            });
+        }
+        return res.status(404).json({
+            status: 404,
+            message: "Can't find note with that id or the note is not belong to you"
+        });
+    } catch (e) {
+        return commonErrorResponse(e, res);
+    }
+};
+
+exports.deleteNote = async function (req, res) {
+    try {
+        const {ID_ACCOUNT} = req.user;
+        const {id_note} = req.params;
+        if (!id_note) {
+            return noteRequired(res);
+        }
+        const note = await NOTE.findOne({where: {ID_NOTE: id_note, ID_ACCOUNT}});
+        if (note) {
+            const deletedNote = await note.destroy();
+            if (deletedNote) {
+                return res.status(200).json({
+                    status: 200,
+                    message: "note with id: " + id_note + " deleted successfully"
+                });
+            }
+            return res.status(500).json({
+                status: 500,
+                message: "failed to delete note with id: " + id_note
             });
         }
         return res.status(404).json({
