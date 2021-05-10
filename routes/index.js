@@ -1,9 +1,7 @@
 const express = require('express');
+const {account: {createAccount}} = require('../controllers');
 const router = express.Router();
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Express'});
-});
+router.post('/create_account', createAccount);
 
 module.exports = router;

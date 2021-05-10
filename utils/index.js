@@ -1,0 +1,1 @@
+exports.password = require('./password');
