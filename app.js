@@ -38,7 +38,7 @@ if (cluster.isMaster) {
 } else {
     // Workers can share any TCP connection
     // In this case it is an HTTP server
-    const port = process.env.USAHAQ_PORT ?? 3000;
-    http.createServer(app).listen(3000);
+    const port = process.env.TODO_APP_PORT ?? 3000;
+    http.createServer(app).listen(port);
     console.log(`Worker ${process.pid} started`);
 }
